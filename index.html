@@ -64,8 +64,8 @@
     <p>Drop your image here to convert it to a Base64 Data URL</p>
     <p class="error"></p>
     <div class="get-it">
-      <a href="">Copy</a>
-      <a href="">Download</a>
+      <a id="copy">Copy</a>
+      <a id="download" download="base64.txt">Download</a>
     </div>
     <textarea></textarea>
   </div>
@@ -77,6 +77,9 @@
       const dropZone = document.querySelector('.drop-zone');
       const error = document.querySelector('.error');
       const textarea = document.querySelector('textarea');
+      const download = document.querySelector('#download');
+      const copy = document.querySelector('#copy');
+      const MIME_TYPE = 'text/plain';
 
       window.addEventListener('dragenter', e => {
         body.classList.add('drag-over');
@@ -105,6 +108,14 @@
         const reader = new FileReader();
         reader.addEventListener('load', () => {
           textarea.value = reader.result;
+          const blob = new Blob([reader.result], {type: MIME_TYPE});
+          const href = window.URL.createObjectURL(blob);
+          download.setAttribute('href', href);
+          download.setAttribute('downloadUrl', [
+            MIME_TYPE,
+            'base64.txt',
+            href,
+          ].join(':'));
           body.classList.remove('drag-over');
           body.classList.add('success');
         });
