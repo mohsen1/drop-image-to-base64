@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Image to Base64 URL</title>
+  <style>
+    html, body {
+      font-family: sans-serif;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      display: flex;
+    }
+
+    .drop-zone {
+      flex: 1;
+      background: #E6E6E6;
+      transition: background 50ms ease-in;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drop-zone p {
+      text-align: center;
+    }
+
+    .drag-over .drop-zone {
+      background: gold;
+    }
+
+    .error {
+      color: red;
+    }
+
+    textarea {
+      border: 0;
+      background: none;
+      display: block;
+      padding: 0;
+      margin: 0;
+      font-family: monospace;
+      flex: 1;
+    }
+    textarea:focus {
+      outline: none;
+    }
+
+    .get-it { display: none; }
+    .get-it a {
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+    }
+    .success .get-it { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="drop-zone">
+    <p>Drop your image here to convert it to a Base64 Data URL</p>
+    <p class="error"></p>
+    <div class="get-it">
+      <a href="">Copy</a>
+      <a href="">Download</a>
+    </div>
+    <textarea></textarea>
+  </div>
+  <script>
+    (() => {
+      'use strict';
+
+      const body = document.body;
+      const dropZone = document.querySelector('.drop-zone');
+      const error = document.querySelector('.error');
+      const textarea = document.querySelector('textarea');
+
+      window.addEventListener('dragenter', e => {
+        body.classList.add('drag-over');
+        e.preventDefault();
+      }, false);
+
+      window.addEventListener('dragleave', e => {
+        body.classList.remove('drag-over');
+        e.preventDefault();
+      }, false);
+
+      dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+      });
+
+      dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+
+        const dt = e.dataTransfer;
+        const file = dt.items[0].getAsFile();
+
+        if (!/image/.test(file.type)) {
+          return showError('File has to be an image file');
+        }
+
+        const reader = new FileReader();
+        reader.addEventListener('load', () => {
+          textarea.value = reader.result;
+          body.classList.remove('drag-over');
+          body.classList.add('success');
+        });
+        reader.readAsDataURL(file);
+      });
+
+      function showError(message) {
+        body.classList.remove('drag-over');
+
+        error.innerText = message;
+        setTimeout(()=> {
+          error.innerText = '';
+        }, 5000);
+      }
+    })();
+  </script>
+</body>
+</html>
