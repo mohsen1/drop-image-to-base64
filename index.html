@@ -64,7 +64,7 @@
     <p>Drop your image here to convert it to a Base64 Data URL</p>
     <p class="error"></p>
     <div class="get-it">
-      <a id="copy">Copy</a>
+      <a id="copy" href="#copy">Copy</a>
       <a id="download" download="base64.txt">Download</a>
     </div>
     <textarea></textarea>
@@ -120,6 +120,20 @@
           body.classList.add('success');
         });
         reader.readAsDataURL(file);
+      });
+
+      copy.addEventListener('click', (event)=> {
+        event.preventDefault();
+
+		    const range = document.createRange();
+		    range.selectNode(textarea);
+		    window.getSelection().addRange(range);
+
+		    try {
+          document.execCommand('copy');
+        } catch (error) {
+          alert('Copy failed');
+        }
       });
 
       function showError(message) {
